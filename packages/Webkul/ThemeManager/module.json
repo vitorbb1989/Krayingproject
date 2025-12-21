@@ -11,7 +11,7 @@
     "priority": 999,
     "providers": [
         "Webkul\\ThemeManager\\Providers\\ThemeManagerServiceProvider",
-        "Webkul\\ThemeManager\\Providers\\EventServiceProvider"
+        "Webkul\\ThemeManager\\Providers\\ModuleServiceProvider"
     ],
     "aliases": {},
     "files": [],

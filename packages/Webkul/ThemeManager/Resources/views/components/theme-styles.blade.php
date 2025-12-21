@@ -409,14 +409,14 @@
     @if($themeConfig->logo_main)
         /* Logo principal (sidebar desktop, mobile) */
         img[src*="logo.svg"]:not([src*="dark-logo"]):not([src*="mobile"]) {
-            content: url('{{ asset("storage/theme-manager/" . $themeConfig->logo_main) }}') !important;
+            content: url('{{ app('theme')->getLogo('main') }}') !important;
         }
     @endif
 
     @if($themeConfig->logo_light)
         /* Logo claro (modo escuro) */
         img[src*="dark-logo.svg"] {
-            content: url('{{ asset("storage/theme-manager/" . $themeConfig->logo_light) }}') !important;
+            content: url('{{ app('theme')->getLogo('light') }}') !important;
         }
     @endif
 
@@ -424,14 +424,29 @@
         /* Logo mobile */
         img[src*="mobile-light-logo.svg"],
         img[src*="mobile-dark-logo.svg"] {
-            content: url('{{ asset("storage/theme-manager/" . $themeConfig->logo_icon) }}') !important;
+            content: url('{{ app('theme')->getLogo('icon') }}') !important;
         }
     @endif
 
-    @if($themeConfig->favicon)
-        /* Favicon */
-        link[rel="icon"] {
-            href: url('{{ asset("storage/theme-manager/" . $themeConfig->favicon) }}') !important;
-        }
-    @endif
+    {{-- NOTA: Favicon não pode ser alterado via CSS.
+         O favicon é alterado via JavaScript ou meta tags no head.
+         Veja a implementação no ThemeMiddleware que injeta o link correto. --}}
 </style>
+
+{{-- Favicon injection via JavaScript (CSS não pode alterar atributos HTML) --}}
+@if($themeConfig->favicon)
+<script>
+    (function() {
+        var favicon = document.querySelector('link[rel="icon"]') || document.querySelector('link[rel="shortcut icon"]');
+        if (favicon) {
+            favicon.href = '{{ app("theme")->getFavicon() }}';
+        } else {
+            var link = document.createElement('link');
+            link.rel = 'icon';
+            link.type = 'image/x-icon';
+            link.href = '{{ app("theme")->getFavicon() }}';
+            document.head.appendChild(link);
+        }
+    })();
+</script>
+@endif
